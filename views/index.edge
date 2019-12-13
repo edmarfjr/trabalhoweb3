@@ -1,0 +1,124 @@
+@layout('layouts.app')
+@section('content')
+ <!-- Page Header -->
+ <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<header class="masthead">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="site-heading">
+          
+          <span class="subheading">Blog</span>
+        </div>
+        <div align = "center">
+            <input type="text" name="search" id="search" placeholder="pesquisar" class="form-control"/>
+        </div>
+        <ul class="list-group" id="result"></ul>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Main Content -->
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="post-preview">
+          <div>
+            <div id="status"></div>
+            <div id="mostratudo"></div>
+          </div>
+        </div>
+        <hr> 
+      <!-- Pager -->
+      <div class="clearfix">
+        <a class="btn btn-primary float-right" href="#">Older Posts &rarr;</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  setInterval(mostraposts,5000);
+  
+  $(document).ready(function(){
+      $('#search').keyup(function(){
+        $('#result').html('');
+        var searchField = $('#search').val();
+        var expression = new RegExp(searchField,"i");
+        $.getJSON('/posts/json',function(data){
+          $.each(data,function(key,value){
+            if(value.title.search(expression)!= -1 || value.username.search(expression)!= -1)
+            {
+              $('#result').append('<li class="list-group-item"><span><a href="/postajaxnew/'+value._id+'">'+value.title+'</a></span> </li>');
+            }
+          });
+        })
+      });
+  });
+
+  function mostraposts(){
+      var url  = "/posts/json";
+      var xhr  = new XMLHttpRequest()
+      xhr.open('GET', url, true)
+      xhr.onload = function () {
+        var posts = JSON.parse(xhr.responseText);
+        if (xhr.readyState == 4 && xhr.status == "200") {
+          console.table(posts);
+              document.getElementById("mostratudo").innerHTML = "";
+              posts.forEach((post)=>{
+                console.log(post._id);
+                var t = document.createTextNode(post.title); 
+                var para = document.createElement("P");
+                var a = document.createElement('a');
+                a.setAttribute("href",'/postajaxnew/'+post._id);
+                //var div = document.createElement("div");
+                a.appendChild(t);
+                para.appendChild(a);
+                
+                document.getElementById("mostratudo").appendChild(para); 
+                console.log(post.title);
+              })
+        } else {
+          console.error(posts);
+        }
+      }
+      if (xhr.onload) {
+          xhr.onloadstart = function (evt) {
+          console.log("iniciando");
+          document.getElementById("status").innerHTML = "";
+          var t = document.createTextNode("iniciando carregamento"); 
+          var para = document.createElement("P");
+          var div = document.createElement("div");
+          para.appendChild(t);
+          document.getElementById("status").appendChild(para);
+        };
+        xhr.onprogress = function (evt) {
+          if (evt.lengthComputable) {
+            console.log("meio");
+            document.getElementById("status").innerHTML = "";
+            var t = document.createTextNode("carregando do banco"); 
+            var para = document.createElement("P");
+            var div = document.createElement("div");
+            para.appendChild(t);
+            document.getElementById("status").appendChild(para);
+          }
+        };
+        xhr.onloadend = function (evt) {
+          console.log("fim");
+         
+          var t = document.createTextNode("fim do carregamento"); 
+          var para = document.createElement("P");
+          var div = document.createElement("div");
+          para.appendChild(t);
+          setTimeout(function(){
+            document.getElementById("status").innerHTML = "";
+            document.getElementById("status").appendChild(para);
+            }, 1000);
+          
+        };
+      }
+      xhr.send(null);
+    }
+</script>
+<hr>
+@endsection

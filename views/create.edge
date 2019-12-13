@@ -1,0 +1,72 @@
+@layout('layouts.app')
+ 
+@section('content')
+<!-- Page Header -->
+<header class="masthead">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="page-heading">
+          <h1>Criar nova postagem</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+ <script>
+    function submitform(){
+        var XHR = new XMLHttpRequest();
+        var FD  = new FormData(document.getElementById("formulario"));
+        // Define what happens on successful data submission
+        XHR.addEventListener('load', function(event) {
+        alert('Postagem Enviada');
+        window.location.href = "/";
+        });
+      // Define what happens in case of error
+         XHR.addEventListener('error', function(event) {
+            alert('ERRO');
+         });
+        XHR.open('POST', '/posts/store');
+        XHR.send(FD);
+    }
+ </script>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <form action="/posts/store" method="POST" encType="multipart/form-data" id="formulario">
+        <div class="control-group">
+          <div class="form-group floating-label-form-group controls">
+            <label>Usuário</label>
+            <input type="text" name="username" placeholder="Usuário" class="form-control">
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="form-group floating-label-form-group controls">
+            <label>Titulo</label>
+            <input type="text" name="title" placeholder="Titulo" class="form-control">
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="form-group floating-label-form-group controls">
+            <label>Descrição</label>
+            <input type="text" name="description" placeholder="Descrição" class="form-control">
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="form-group floating-label-form-group controls">
+            <label>Conteudo</label>
+            <textarea name="content" placeholder="Conteudo ..." cols="30" rows="10" class="form-control"></textarea>
+          </div>
+        </div>
+        <div class="form-group mt-3">
+          <input type="file" name="image" class="form-control-file">
+        </div>
+        <div class="form-group my-4 text-center">
+          <button type="button" onclick="submitform()" class="btn btn-primary">Criar Postagem</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endsection

@@ -1,0 +1,105 @@
+@layout('layouts.app')
+ 
+@section('content')
+   <div>
+         <div id="status"></div>
+         <div id="mostra"></div>
+         <div>
+            <h3>Titulo</h3>
+            <div id="title"></div>
+         </div>
+         <br>
+         <div>
+            <h3>Usuário</h3>
+            <div id="username"></div>
+         </div>
+         <br>
+         <div>
+            <h3>Descrição</h3>
+            <div id="description"></div>
+         </div>
+         <br>
+         <div>
+            <h3>Conteudo</h3>
+            <div id="content"></div>
+         </div>
+        <script>
+         function sleep(milliseconds) {
+            var start = new Date().getTime();
+            for (var i = 0; i < 1e7; i++) {
+               if ((new Date().getTime() - start) > milliseconds){
+                  break;
+               }
+            }
+         }
+
+        var url  = "/post/json/{{id}}";
+        var xhr  = new XMLHttpRequest()
+        xhr.open('GET', url, true)
+        xhr.onload = function () {
+	    var post = JSON.parse(xhr.responseText);
+	    if (xhr.readyState == 4 && xhr.status == "200") {
+	    	console.table(post);
+            var t = document.createTextNode(post.title); 
+            var d = document.createTextNode(post.description);  
+            var c = document.createTextNode(post.content);  
+            var u = document.createTextNode(post.username);  
+            var br = document.createTextNode("<br>");  
+            var para1 = document.createElement("P");
+            var para2 = document.createElement("P");
+            var para3 = document.createElement("P");
+            var para4 = document.createElement("P");
+            para1.appendChild(t);
+            para2.appendChild(d);
+            para3.appendChild(c);
+            para4.appendChild(u);
+                
+            document.getElementById("title").appendChild(para1); 
+            document.getElementById("description").appendChild(para2); 
+            document.getElementById("content").appendChild(para3); 
+            document.getElementById("username").appendChild(para4); 
+            
+	    } else {
+		    console.error(post);
+	    }
+        }
+
+        if (xhr.onload) {
+          xhr.onloadstart = function (evt) {
+          console.log("iniciando");
+          document.getElementById("status").innerHTML = "";
+          var t = document.createTextNode("iniciando carregamento"); 
+          var para = document.createElement("P");
+          var div = document.createElement("div");
+          para.appendChild(t);
+          document.getElementById("status").appendChild(para);
+        };
+        xhr.onprogress = function (evt) {
+          if (evt.lengthComputable) {
+            console.log("meio");
+            document.getElementById("status").innerHTML = "";
+            var t = document.createTextNode("carregando do banco"); 
+            var para = document.createElement("P");
+            var div = document.createElement("div");
+            para.appendChild(t);
+            document.getElementById("status").appendChild(para);
+          }
+        };
+        xhr.onloadend = function (evt) {
+            console.log("fim");
+            var t = document.createTextNode("fim do carregamento"); 
+            var para = document.createElement("P");
+            var div = document.createElement("div");
+            para.appendChild(t);
+            setTimeout(function(){
+            document.getElementById("status").innerHTML = "";
+            document.getElementById("status").appendChild(para);
+            }, 1000);
+         
+          
+        };
+      }
+        xhr.send(null);
+        </script>
+   </div>
+@endsection
