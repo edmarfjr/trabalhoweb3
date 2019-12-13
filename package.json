@@ -19,7 +19,7 @@
     "express-session": "^1.16.2",
     "html": "^1.0.0",
     "mongo": "^0.1.0",
-    "mongoose": "^5.6.1",
+    "mongoose": "^5.7.5",
     "nodemon": "^1.19.1",
     "startbootstrap-clean-blog": "^5.0.7"
   }
